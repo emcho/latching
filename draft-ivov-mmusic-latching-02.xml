@@ -325,10 +325,10 @@
             restrictions are mostly related to security: once a session
             has started a user agent is not expected to suddenly start
             streaming from a different port without sending a new offer
-            first, so a change may indicate an attempt to hijack the
+            first. A change may indicate an attempt to hijack the
             session. In some cases however, a port change may be caused
             by a re-mapping in a NAT device standing between the SBC and
-            the UA. More advanced SBCs may hence allow some level of
+            the UA. More advanced SBCs may therefore allow some level of
             flexibility on the re-latching restrictions.
           </t>
         </list>
@@ -537,18 +537,25 @@
         common example is typically referred to as "restricted-latching",
         whereby the SBC will not latch to any packets from a source
         public IP address other than the one the SIP UA uses for SIP
-        signaling. In some cases the limitation may be loosened to allow
-        media from a range of IP addresses belonging to the same network
-        in order to allow for use cases such as decomposed UAs and
-        various forms of third party call control. This way
-        the SBC simply ignores and does not latch onto packets coming
-        from the attacker. If the attacker knows the public source IP of
-        the legitimate SIP UA that is actually making the call, then
-        they could still flood all of the SBC's public IP addresses and
-        ports with packets spoofing that SIP UA's public source IP
-        address. However, this would only disturb media from that IP (or
-        range of IP addresses) rather than all calls that the SBC is
-        servicing.
+        signaling. This way the SBC simply ignores and does not latch
+        onto packets coming from the attacker. In some cases the
+        limitation may be loosened to allow media from a range of IP
+        addresses belonging to the same network in order to allow for
+        use cases such as decomposed UAs and various forms of third
+        party call control. However, since relaxing the restrictions in
+        such a way may widen the gap for potential attackers, such
+        configurations are generally performed only on a case-by-case
+        basis so that the specifics of individual deployments woult be
+        taken into account.
+     </t>
+     <t>
+        In all of the above problesm would still arise if the attacker
+        knows the public source IP of the UA that is actually making the
+        call. This would allow them to still flood all of the SBC's
+        public IP addresses and ports with packets spoofing that SIP
+        UA's public source IP address. However, this would only disturb
+        media from that IP (or range of IP addresses) rather than all
+        calls that the SBC is servicing.
       </t>
       <t>
         A malicious source could send media packets to an SBC 
@@ -573,9 +580,17 @@
         automated UAs would also hang up when they do not receive any
         media). The attacker could also redirect all media to the real
         SIP UA after receiving it, in which case the attack would likely
-        remain undetected and succeed. Naturally,
-        <xref target="RFC3711">SRTP</xref> would prevent such an attack
-        from succeeding, and should be used independently of HNT.
+        remain undetected and succeed. Again, this would be of
+        particular concern with larger, carrier grade NATs: the larger
+        the number of devices fronted by a NAT, the more use cases would
+        vary and the more the number of possible attack vectors would
+        grow. Naturally, <xref target="RFC3711">SRTP</xref> would
+        prevent such an attack from succeeding, and should be used
+        independently of HNT. Of course SRTP deployment may itself
+        present some issues, such as distributing certificates for
+        example or allowing for cross domain interoperability, which may
+        sometimes make it more convenient for use within enterprise
+        environments rather than consumer oriented services.
       </t>
       <t>
         For SIP clients, HNT is usually transparent in the sense that 

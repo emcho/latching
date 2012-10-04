@@ -340,11 +340,11 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
        on and off hold).  The reasons for such restrictions are mostly
        related to security: once a session has started a user agent is
        not expected to suddenly start streaming from a different port
-       without sending a new offer first, so a change may indicate an
+       without sending a new offer first.  A change may indicate an
        attempt to hijack the session.  In some cases however, a port
        change may be caused by a re-mapping in a NAT device standing
-       between the SBC and the UA.  More advanced SBCs may hence allow
-       some level of flexibility on the re-latching restrictions.
+       between the SBC and the UA.  More advanced SBCs may therefore
+       allow some level of flexibility on the re-latching restrictions.
 
    Figure 2 describes how latching occurs for SIP where HNT is provided
    by an SBC connected to two networks: 203.0.113/24 facing towards the
@@ -593,22 +593,22 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
    some time.  The most common example is typically referred to as
    "restricted-latching", whereby the SBC will not latch to any packets
    from a source public IP address other than the one the SIP UA uses
-   for SIP signaling.  In some cases the limitation may be loosened to
-   allow media from a range of IP addresses belonging to the same
-   network in order to allow for use cases such as decomposed UAs and
-   various forms of third party call control.  This way the SBC simply
-   ignores and does not latch onto packets coming from the attacker.  If
-   the attacker knows the public source IP of the legitimate SIP UA that
-   is actually making the call, then they could still flood all of the
-   SBC's public IP addresses and ports with packets spoofing that SIP
-   UA's public source IP address.  However, this would only disturb
-   media from that IP (or range of IP addresses) rather than all calls
-   that the SBC is servicing.
+   for SIP signaling.  This way the SBC simply ignores and does not
+   latch onto packets coming from the attacker.  In some cases the
+   limitation may be loosened to allow media from a range of IP
+   addresses belonging to the same network in order to allow for use
+   cases such as decomposed UAs and various forms of third party call
+   control.  However, since relaxing the restrictions in such a way may
+   widen the gap for potential attackers, such configurations are
+   generally performed only on a case-by-case basis so that the
+   specifics of individual deployments woult be taken into account.
 
-   A malicious source could send media packets to an SBC media-latching
-   UDP port in the hopes of being latched-to for the purpose of
-   receiving media for a given SIP session.  SBCs have various
-   mechanisms to prevent this as well.  Restricted latching for example
+   In all of the above problesm would still arise if the attacker knows
+   the public source IP of the UA that is actually making the call.
+   This would allow them to still flood all of the SBC's public IP
+   addresses and ports with packets spoofing that SIP UA's public source
+   IP address.  However, this would only disturb media from that IP (or
+   range of IP addresses) rather than all calls that the SBC is
 
 
 
@@ -617,6 +617,12 @@ Ivov, et al.              Expires April 8, 2013                [Page 11]
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
+   servicing.
+
+   A malicious source could send media packets to an SBC media-latching
+   UDP port in the hopes of being latched-to for the purpose of
+   receiving media for a given SIP session.  SBCs have various
+   mechanisms to prevent this as well.  Restricted latching for example
    would also help in this case since the attacker can't make the SBC
    send media packets back to themselves since the SBC will not latch
    onto the attacker's packets.  There could still be an issue if the
@@ -633,9 +639,17 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
    (although many such automated UAs would also hang up when they do not
    receive any media).  The attacker could also redirect all media to
    the real SIP UA after receiving it, in which case the attack would
-   likely remain undetected and succeed.  Naturally, SRTP [RFC3711]
-   would prevent such an attack from succeeding, and should be used
-   independently of HNT.
+   likely remain undetected and succeed.  Again, this would be of
+   particular concern with larger, carrier grade NATs: the larger the
+   number of devices fronted by a NAT, the more use cases would vary and
+   the more the number of possible attack vectors would grow.
+   Naturally, SRTP [RFC3711] would prevent such an attack from
+   succeeding, and should be used independently of HNT.  Of course SRTP
+   deployment may itself present some issues, such as distributing
+   certificates for example or allowing for cross domain
+   interoperability, which may sometimes make it more convenient for use
+   within enterprise environments rather than consumer oriented
+   services.
 
    For SIP clients, HNT is usually transparent in the sense that the SIP
    UA does not know it occurs.  In certain cases it may be detectable,
@@ -652,6 +666,13 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
    sometimes argued that, neither S/MIME nor [RFC4474] are widely
    deployed and that this may not be a real concern.
 
+
+
+Ivov, et al.              Expires April 8, 2013                [Page 12]
+
+Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
+
+
    From a privacy perspective, media relaying is sometimes seen as a way
    of protecting one's IP address and not revealing it to the remote
    party.  That kind of IP address masking is often perceived as
@@ -662,16 +683,6 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
 7.  References
-
-
-
-
-
-
-Ivov, et al.              Expires April 8, 2013                [Page 12]
-
-Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
-
 
 7.1.  Normative References
 
@@ -710,6 +721,14 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
               RFC 4787, January 2007.
 
    [RFC5245]  Rosenberg, J., "Interactive Connectivity Establishment
+
+
+
+Ivov, et al.              Expires April 8, 2013                [Page 13]
+
+Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
+
+
               (ICE): A Protocol for Network Address Translator (NAT)
               Traversal for Offer/Answer Protocols", RFC 5245,
               April 2010.
@@ -721,13 +740,6 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
    [RFC5751]  Ramsdell, B. and S. Turner, "Secure/Multipurpose Internet
               Mail Extensions (S/MIME) Version 3.2 Message
               Specification", RFC 5751, January 2010.
-
-
-
-Ivov, et al.              Expires April 8, 2013                [Page 13]
-
-Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
-
 
    [RFC5766]  Mahy, R., Matthews, P., and J. Rosenberg, "Traversal Using
               Relays around NAT (TURN): Relay Extensions to Session
@@ -761,18 +773,6 @@ Authors' Addresses
    Email: emcho@jitsi.org
 
 
-   Hadriel Kaplan
-   Acme Packet
-   100 Crosby Drive
-   Bedford, MA  01730
-   USA
-
-   Email: hkaplan@acmepacket.com
-
-
-
-
-
 
 
 
@@ -785,6 +785,15 @@ Ivov, et al.              Expires April 8, 2013                [Page 14]
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
+   Hadriel Kaplan
+   Acme Packet
+   100 Crosby Drive
+   Bedford, MA  01730
+   USA
+
+   Email: hkaplan@acmepacket.com
+
+
    Dan Wing
    Cisco Systems, Inc.
    170 West Tasman Drive
@@ -792,15 +801,6 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
    USA
 
    Email: dwing@cisco.com
-
-
-
-
-
-
-
-
-
 
 
 
