@@ -4,10 +4,10 @@
 Network Working Group                                            E. Ivov
 Internet-Draft                                                     Jitsi
 Intended status: Informational                                 H. Kaplan
-Expires: April 8, 2013                                       Acme Packet
+Expires: April 9, 2013                                       Acme Packet
                                                                  D. Wing
                                                                    Cisco
-                                                         October 5, 2012
+                                                         October 6, 2012
 
 
       Latching: Hosted NAT Traversal (HNT) for Media in Real-Time
@@ -41,7 +41,7 @@ Status of this Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on April 8, 2013.
+   This Internet-Draft will expire on April 9, 2013.
 
 Copyright Notice
 
@@ -52,7 +52,7 @@ Copyright Notice
 
 
 
-Ivov, et al.              Expires April 8, 2013                 [Page 1]
+Ivov, et al.              Expires April 9, 2013                 [Page 1]
 
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
@@ -108,7 +108,7 @@ Table of Contents
 
 
 
-Ivov, et al.              Expires April 8, 2013                 [Page 2]
+Ivov, et al.              Expires April 9, 2013                 [Page 2]
 
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
@@ -164,7 +164,7 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
 
-Ivov, et al.              Expires April 8, 2013                 [Page 3]
+Ivov, et al.              Expires April 9, 2013                 [Page 3]
 
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
@@ -220,7 +220,7 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
 
-Ivov, et al.              Expires April 8, 2013                 [Page 4]
+Ivov, et al.              Expires April 9, 2013                 [Page 4]
 
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
@@ -276,7 +276,7 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
 
-Ivov, et al.              Expires April 8, 2013                 [Page 5]
+Ivov, et al.              Expires April 9, 2013                 [Page 5]
 
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
@@ -332,7 +332,7 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
 
-Ivov, et al.              Expires April 8, 2013                 [Page 6]
+Ivov, et al.              Expires April 9, 2013                 [Page 6]
 
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
@@ -344,7 +344,9 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
        attempt to hijack the session.  In some cases however, a port
        change may be caused by a re-mapping in a NAT device standing
        between the SBC and the UA.  More advanced SBCs may therefore
-       allow some level of flexibility on the re-latching restrictions.
+       allow some level of flexibility on the re-latching restrictions
+       while carefully considering the potential security implications
+       of doing so.
 
    Figure 2 describes how latching occurs for SIP where HNT is provided
    by an SBC connected to two networks: 203.0.113/24 facing towards the
@@ -386,9 +388,7 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
 
-
-
-Ivov, et al.              Expires April 8, 2013                 [Page 7]
+Ivov, et al.              Expires April 9, 2013                 [Page 7]
 
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
@@ -444,7 +444,7 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
 
-Ivov, et al.              Expires April 8, 2013                 [Page 8]
+Ivov, et al.              Expires April 9, 2013                 [Page 8]
 
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
@@ -500,7 +500,7 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
 
-Ivov, et al.              Expires April 8, 2013                 [Page 9]
+Ivov, et al.              Expires April 9, 2013                 [Page 9]
 
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
@@ -556,7 +556,7 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
 
-Ivov, et al.              Expires April 8, 2013                [Page 10]
+Ivov, et al.              Expires April 9, 2013                [Page 10]
 
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
@@ -601,9 +601,9 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
    control.  However, since relaxing the restrictions in such a way may
    widen the gap for potential attackers, such configurations are
    generally performed only on a case-by-case basis so that the
-   specifics of individual deployments woult be taken into account.
+   specifics of individual deployments would be taken into account.
 
-   In all of the above problesm would still arise if the attacker knows
+   In all of the above problems would still arise if the attacker knows
    the public source IP of the UA that is actually making the call.
    This would allow them to still flood all of the SBC's public IP
    addresses and ports with packets spoofing that SIP UA's public source
@@ -612,7 +612,7 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
 
-Ivov, et al.              Expires April 8, 2013                [Page 11]
+Ivov, et al.              Expires April 9, 2013                [Page 11]
 
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
@@ -640,16 +640,15 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
    receive any media).  The attacker could also redirect all media to
    the real SIP UA after receiving it, in which case the attack would
    likely remain undetected and succeed.  Again, this would be of
-   particular concern with larger, carrier grade NATs: the larger the
-   number of devices fronted by a NAT, the more use cases would vary and
-   the more the number of possible attack vectors would grow.
-   Naturally, SRTP [RFC3711] would prevent such an attack from
-   succeeding, and should be used independently of HNT.  Of course SRTP
-   deployment may itself present some issues, such as distributing
-   certificates for example or allowing for cross domain
-   interoperability, which may sometimes make it more convenient for use
-   within enterprise environments rather than consumer oriented
-   services.
+   particular concern with larger scale NATs serving many different
+   endpoints serving many different endpoints such as carrier grade
+   NATs.  The larger the number of devices fronted by a NAT is, the more
+   use cases would vary and the more the number of possible attack
+   vectors would grow.
+
+   Naturally, SRTP [RFC3711] would prevent such attacks from actually
+   compromising the content of a media session, and should be used
+   independently of HNT.
 
    For SIP clients, HNT is usually transparent in the sense that the SIP
    UA does not know it occurs.  In certain cases it may be detectable,
@@ -668,7 +667,8 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
 
-Ivov, et al.              Expires April 8, 2013                [Page 12]
+
+Ivov, et al.              Expires April 9, 2013                [Page 12]
 
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
@@ -724,7 +724,7 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
 
-Ivov, et al.              Expires April 8, 2013                [Page 13]
+Ivov, et al.              Expires April 9, 2013                [Page 13]
 
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
@@ -780,7 +780,7 @@ Authors' Addresses
 
 
 
-Ivov, et al.              Expires April 8, 2013                [Page 14]
+Ivov, et al.              Expires April 9, 2013                [Page 14]
 
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
@@ -836,5 +836,5 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
 
-Ivov, et al.              Expires April 8, 2013                [Page 15]
+Ivov, et al.              Expires April 9, 2013                [Page 15]
 
