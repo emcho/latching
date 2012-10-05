@@ -589,9 +589,15 @@
         attack vectors would grow.
       </t>
       <t>
-        Naturally, <xref target="RFC3711">SRTP</xref> would prevent such
-        attacks from actually compromising the content of a media
-        session, and should be used independently of HNT.
+        Naturally, <xref target="RFC3711">SRTP</xref> would help
+        mitigate  such threats and should be used independently of HNT.
+        For example, in cases of end-to-end encryption it would still be
+        possible for an attacker to hijack a session despite the use of
+        SRTP and perform a denial of service attack even with SRTP.
+        However, media integrity would not be compromised. Additionally
+        if the SBC that performs the latching is actually participating
+        in the SRTP negotiation then it would simply refuse to latch
+        onto a source unless it can authenticate it.
       </t>
       <t>
         For SIP clients, HNT is usually transparent in the sense that 

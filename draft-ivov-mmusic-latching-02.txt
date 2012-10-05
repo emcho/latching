@@ -646,9 +646,14 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
    use cases would vary and the more the number of possible attack
    vectors would grow.
 
-   Naturally, SRTP [RFC3711] would prevent such attacks from actually
-   compromising the content of a media session, and should be used
-   independently of HNT.
+   Naturally, SRTP [RFC3711] would help mitigate such threats and should
+   be used independently of HNT.  For example, in cases of end-to-end
+   encryption it would still be possible for an attacker to hijack a
+   session despite the use of SRTP and perform a denial of service
+   attack even with SRTP.  However, media integrity would not be
+   compromised.  Additionally if the SBC that performs the latching is
+   actually participating in the SRTP negotiation then it would simply
+   refuse to latch onto a source unless it can authenticate it.
 
    For SIP clients, HNT is usually transparent in the sense that the SIP
    UA does not know it occurs.  In certain cases it may be detectable,
@@ -660,11 +665,6 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
    In order to perform HNT, the SBC has to modify SDP to and from the
    SIP UA behind a NAT, and thus the SIP UA cannot use S/MIME [RFC5751],
-   and it cannot sign a sending request or verify a received request
-   using [RFC4474] unless the SBC re-signs the request.  However it is
-   sometimes argued that, neither S/MIME nor [RFC4474] are widely
-   deployed and that this may not be a real concern.
-
 
 
 
@@ -672,6 +672,11 @@ Ivov, et al.              Expires April 9, 2013                [Page 12]
 
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
+
+   and it cannot sign a sending request or verify a received request
+   using [RFC4474] unless the SBC re-signs the request.  However it is
+   sometimes argued that, neither S/MIME nor [RFC4474] are widely
+   deployed and that this may not be a real concern.
 
    From a privacy perspective, media relaying is sometimes seen as a way
    of protecting one's IP address and not revealing it to the remote
@@ -716,11 +721,6 @@ Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
    [RFC4566]  Handley, M., Jacobson, V., and C. Perkins, "SDP: Session
               Description Protocol", RFC 4566, July 2006.
 
-   [RFC4787]  Audet, F. and C. Jennings, "Network Address Translation
-              (NAT) Behavioral Requirements for Unicast UDP", BCP 127,
-              RFC 4787, January 2007.
-
-   [RFC5245]  Rosenberg, J., "Interactive Connectivity Establishment
 
 
 
@@ -729,6 +729,11 @@ Ivov, et al.              Expires April 9, 2013                [Page 13]
 Internet-Draft    Hosted NAT Traversal for Media in RTC     October 2012
 
 
+   [RFC4787]  Audet, F. and C. Jennings, "Network Address Translation
+              (NAT) Behavioral Requirements for Unicast UDP", BCP 127,
+              RFC 4787, January 2007.
+
+   [RFC5245]  Rosenberg, J., "Interactive Connectivity Establishment
               (ICE): A Protocol for Network Address Translator (NAT)
               Traversal for Offer/Answer Protocols", RFC 5245,
               April 2010.
@@ -771,11 +776,6 @@ Authors' Addresses
    France
 
    Email: emcho@jitsi.org
-
-
-
-
-
 
 
 
