@@ -592,6 +592,13 @@
         explicitly wishes to do so.
       </t>
     </section>
+    <section title='Acknowledgements'>
+      <t>
+        The authors would like to thank Flemming Andreasen and Miguel A.
+        Garcia for their reviews and suggestions on improving this
+        document.
+      </t>
+    </section>
   </middle>
   <back>
     <references title='Normative References'>
