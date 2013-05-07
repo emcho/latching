@@ -4,7 +4,7 @@
 <!DOCTYPE rfc SYSTEM "rfc2629.dtd">
 
 <rfc category='info' ipr='trust200902'
-     docName='draft-ivov-mmusic-latching-02'>
+     docName='draft-ietf-mmusic-latching-01'>
 
 <?rfc toc='yes' ?>
 <?rfc symrefs='yes' ?>
@@ -62,14 +62,14 @@
     <abstract>
       <t> 
         This document describes behavior of signalling intermediaries in 
-        RTC deployments, sometimes referred to as Session Border 
-        Controllers (SBCs), when performing Hosted NAT Traversal (HNT).
-        HNT is a set of mechanisms, such as media relaying and latching,
-        that such intermediaries use to enable other RTC devices behind 
-        NATs to communicate with each other. This document is 
-        non-normative, and is only written to explain HNT in order to
-        provide a reference to the IETF community, as well as an
-        informative description to manufacturers, and users.
+        Real-Time Communication (RTC) deployments, sometimes referred to
+        as Session Border Controllers (SBCs), when performing Hosted NAT
+        Traversal (HNT). HNT is a set of mechanisms, such as media
+        relaying and latching, that such intermediaries use to enable
+        other RTC devices behind NATs to communicate with each other.
+        This document is non-normative, and is only written to explain
+        HNT in order to provide a reference to the IETF community, as
+        well as an informative description to manufacturers, and users.
       </t>
     </abstract>
   </front>
@@ -81,7 +81,7 @@
         behaviors vary, this document uses the term "NAT" for devices 
         that map any IPv4 or IPv6 address and transport port number to 
         another IPv4 or IPv6 address and transport port number. This 
-        includes consumer NAPTs, Firewall-NATs, IPv4-IPv6 NATs, 
+        includes consumer NATs, Firewall-NATs, IPv4-IPv6 NATs,
         Carrier-Grade NATs, etc.
       </t>
       <t>
@@ -89,19 +89,21 @@
         that try to use a more direct path for media than with 
         signalling, are difficult to use across NATs. They use IP 
         addresses and transport port numbers encoded in bodies such as 
-        <xref target="RFC4566">SDP</xref>> as well as, in the case of 
+        <xref target="RFC4566">SDP</xref> as well as, in the case of
         SIP, various header fields. Such addresses and ports are 
         unusable unless all peers in a session are located behind the 
         same NAT. 
       </t>
       <t>
-        Mechanisms such as <xref target="RFC5389">STUN</xref>, 
-        <xref target="RFC5766">TURN</xref>, and 
-        <xref target="RFC5245">ICE</xref>, did not exist when protocols
-        like SIP began being deployed. Session Border Controllers (SBCs)
-        that were already being used by SIP domains for other SIP and 
-        media-related purposes began to use proprietary mechanisms to 
-        enable SIP devices behind NATs to communicate across the NATs.
+        Mechanisms such as Session Traversal Utilities for NAT (STUN)
+        <xref target="RFC5389"/>, Traversal Using Relays around NAT
+        (TURN) <xref target="RFC5766"/>, and Interactive Connectivity
+        Establishment (ICE) <xref target="RFC5245"/> did not exist when
+        protocols like SIP began being deployed. Session Border
+        Controllers (SBCs) that were already being used by SIP domains
+        for other SIP and media-related purposes began to use
+        proprietary mechanisms to enable SIP devices behind NATs to
+        communicate across the NATs.
       </t>  
       <t>
         The term often used for this behavior is Hosted NAT Traversal 
@@ -154,16 +156,9 @@
         The rest of this document is going to focus primarily on use of 
         HNT for SIP. However, the mechanisms described here are 
         relatively generic and are often used with other protocols, such 
-        as <xref target="RFC6120">XMPP</xref>, MGCP, H.248/MEGACO, and 
-        H.323.
-      </t>
-    </section>
-    <section title="Terminology">
-      <t>
-        The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
-        NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and
-        "OPTIONAL" in this document are to be interpreted as described
-        in <xref target="RFC2119"/>.
+        as <xref target="RFC6120">XMPP</xref>, Media Gateway Control
+        Protocol (MGCP) <xref target="RFC3435"/>, H.248/MEGACO
+        <xref target="RFC3015"/>, and H.323 <xref target="H.323"/>.
       </t>
     </section>
     <section title='Background'>
@@ -175,7 +170,7 @@
             The addresses and port numbers encoded in SDP bodies (or 
             their equivalents) by NATed User Agents (UAs) are not usable
             across the Internet, because they represent the private 
-            addressing information of the UA rather than the 
+            network addressing information of the UA rather than the
             addresses/ports that will be mapped to/from by the NAT.
           </t>
           <t>
@@ -267,10 +262,10 @@
         An UA behind a NAT streams media from a private address:port set
         that once packets cross the NAT, will be mapped to a public set.
         The UA however is not typically aware of the public mapping and
-        would often advertise in the private address:port couple in 
+        would often advertise the private address:port couple in
         signaling. This way, when the signalling intermediary performing
-        HNT receives the private addressing information from the UA it 
-        will not know what address/ports to send media to. Therefore   
+        HNT receives private addressing information from from a NATed UA
+        it will not know what address/ports to send media to. Therefore
         media relays used in HNT would often use a mechanism called 
         "latching".
       </t>
@@ -337,26 +332,27 @@
       <t>
         <xref target="fig-sip-latching"/> describes how latching occurs 
         for SIP where HNT is provided by an SBC connected to two 
-        networks: 203.0.113/24 facing towards the UAC network and
-        198.51.100/24 facing towards the UAS network.
+        networks: 203.0.113/24 facing towards the User Agent Client
+        (UAC) network and 198.51.100/24 facing towards the User Agent
+        Server (UAS) network.
       </t>
       <figure title="Latching by a SIP SBC across two interfaces"
               anchor="fig-sip-latching">
         <artwork>
 <![CDATA[
       192.0.2.1                                         198.51.100.33
-       Alice     NAT          203.0.113/24-SBC-198.51.100/24    Bob
+       Alice     NAT        203.0.113.0/24-SBC-198.51.100.0/24  Bob
       -------    ---                       ---                -------
          |        |                         |                    |
      1.  |--SIP INVITE+offer c=192.0.2.1--->|                    |
          |        |                         |                    |
-     2.  |        |       (SBC allocates 198.51.100.2/22007      |
+     2.  |        |       (SBC allocates 198.51.100.2:22007      |
          |        |        for inbound RTP from UAS,             |
-         |        |        and 203.0.113.4/36010 for             |
+         |        |        and 203.0.113.4:36010 for             |
          |        |        inbound RTP from UAC)                 |
          |        |                         |                    |
      3.  |        |                         |---INVITE+offer---->|
-         |        |                         |c=198.51.100.2/22007|
+         |        |                         |c=198.51.100.2:22007|
          |        |                         |                    |
      4.  |        |                         |<---180 Ringing-----|
          |        |                         |                    |
@@ -364,12 +360,12 @@
      5.  |<------180 Ringing----------------|                    |
          |        |                         |                    |
      6.  |        |                         |<---200+answer------|
-     7.  |<-200+answer,c=203.0.113.4/36010--|  c=198.51.100.33   |
+     7.  |<-200+answer,c=203.0.113.4:36010--|  c=198.51.100.33   |
          |        |                         |                    |
      8.  |------------ACK------------------>|                    |
      9.  |        |                         |-------ACK--------->|
          |        |                         |                    |
-    10.  |=====RTP,dest=203.0.113.4/36010==>|                    |
+    10.  |=====RTP,dest=203.0.113.4:36010==>|                    |
          |        |                         |                    |
     11.  |        |                    (SBC latches to           |
          |        |                   source IP address and      |
@@ -392,7 +388,7 @@
         latching occurs for one such XMPP implementation where HNT is
         provided by an XMPP server on the public internet.
       </t>
-      <figure title="Latcing by a SIP SBC across two interfaces" 
+      <figure title="Latching by a SIP SBC across two interfaces"
               anchor="fig-xmpp-latching">
         <artwork>
 <![CDATA[
@@ -404,13 +400,13 @@
        |              |                        |                    |
    2.  |<------------ack-----------------------|                    |
        |              |                        |                    |
-   3.  |              |      (Server allocates 203.0.113.9/2200     |
+   3.  |              |      (Server allocates 203.0.113.9:2200     |
        |              |       for inbound RTP from Client2,         |
-       |              |       and 203.0.113.9/3300 for              |
+       |              |       and 203.0.113.9:3300 for              |
        |              |       inbound RTP from Client1)             |
        |              |                        |                    |
    4.  |              |                        |--session-initiate->|
-       |              |                        cand=203.0.113.9/2200|
+       |              |                        cand=203.0.113.9:2200|
        |              |                        |                    |
    5.  |              |                        |<-------ack---------|
        |              |                        |                    |
@@ -419,12 +415,12 @@
        |              |                        |  cand=198.51.100.8 |
        |              |                        |                    |
    7.  |              |                        |--------ack-------> |
-   8.  |<-session-accept cand=203.0.113.9/3300-|                    |
+   8.  |<-session-accept cand=203.0.113.9:3300-|                    |
        |              |                        |                    |
    9.  |-----------------ack------------------>|                    |
        |              |                        |                    |
        |              |                        |                    |
-  10.  |======RTP, dest=203.0.113.9/3300======>|                    |
+  10.  |======RTP, dest=203.0.113.9:3300======>|                    |
        |              |                        |                    |
   11.  |              |               (XMPP server latches to       |
        |              |                src IP 203.0.113.4 and       |
@@ -465,7 +461,7 @@
         SIP session begins in 'inactive' or 'recvonly' SDP mode from 
         the UA behind the NAT. In practice, however, SIP sessions from 
         regular UAs (the kind that one could find behind a NAT) 
-        virtually never begin in an inactive or 'recvonly' mode, for
+        virtually never begin an inactive or 'recvonly' mode, for
         obvious reasons. The media direction would also be problematic 
         if the SBC side indicated 'inactive' or 'sendonly' modes when it
         sent SDP to the UA. However SBCs providing HNT would always be
@@ -625,8 +621,24 @@
         remote party. That kind of IP address masking is often perceived
         as important. However, this is no longer an exclusive advantage 
         of HNT since it can also be accomplished by client-controlled 
-        relaying mechanisms such as TURN [RFC5766], if the client 
-        explicitly wishes to do so.
+        relaying mechanisms such as <xref target="RFC5766">TURN</xref>, if the
+        client explicitly wishes to do so.
+      </t>
+    </section>
+    <section title='IANA Considerations'>
+      <t>
+        This document has no actions for IANA.
+      </t>
+      <t>
+        Note to the RFC-Editor: please remove this section prior to
+        publication as an RFC.
+      </t>
+    </section>
+    <section title='Acknowledgements'>
+      <t>
+        The authors would like to thank Flemming Andreasen and Miguel A.
+        Garcia for their reviews and suggestions on improving this
+        document.
       </t>
     </section>
   </middle>
@@ -635,9 +647,10 @@
       <?rfc include="reference.RFC.2119"?>
     </references>
     <references title='Informative References'>
+      <?rfc include="reference.RFC.3015"?>
       <?rfc include="reference.RFC.3261"?>
       <?rfc include="reference.RFC.3264"?>
-      <?rfc include="reference.RFC.3489"?>
+      <?rfc include="reference.RFC.3435"?>
       <?rfc include="reference.RFC.3711"?>
       <?rfc include="reference.RFC.4474"?>
       <?rfc include="reference.RFC.4566"?>
@@ -648,7 +661,19 @@
       <?rfc include="reference.RFC.5766"?>
       <?rfc include="reference.RFC.5853"?>
       <?rfc include="reference.RFC.6120"?>
-      <?rfc include="reference.RFC.6189"?>
+      <reference anchor="H.323">
+        <front>
+          <title>Packet Based Multimedia Communication Systems</title>
+          <author fullname='International Telecommunication Union'>
+            <organization abbrev='ITU-T'>
+              International Telecommunication Union
+            </organization>
+          </author>
+          <date month="July" year="2003" />
+        </front>
+        <seriesInfo name="Recommendation"
+                    value="H.323"/>
+      </reference>
       <reference anchor="XEP-0177">
         <front>
         <title>XEP-0177: Jingle Raw UDP Transport Method</title>
