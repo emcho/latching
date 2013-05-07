@@ -283,15 +283,16 @@
           <t>
             After receiving an offer from a NATed UA, a signaling 
             intermediary located on the public Internet would allocate 
-            a set of IP address:ports on a media relay. The set would 
-            then be advertised to the remote party so that it would use 
-            it for all media it wished to send toward the UA.
+            a set of IP address:ports on a media relay. The set would
+            then be advertised to the remote party so that it would use
+            those media relay address:ports for all media it wished to
+            send toward the UA.
           </t>
           <t>
             Next, after receiving an answer to its offer, the signaling
             server would allocate a second address:port set on the media
-            relay. It would advertise this second set to the UA and use 
-            it for all media traffic to and from the UA. 
+            relay.  It would advertise this second set in the answer to the
+            UA. The UA will then send to this media relay address:port.
           </t>
           <t>
             The media relay receives the media packets on the allocated 
@@ -347,9 +348,7 @@
      1.  |--SIP INVITE+offer c=192.0.2.1--->|                    |
          |        |                         |                    |
      2.  |        |       (SBC allocates 198.51.100.2:22007      |
-         |        |        for inbound RTP from UAS,             |
-         |        |        and 203.0.113.4:36010 for             |
-         |        |        inbound RTP from UAC)                 |
+         |        |        for inbound RTP from UAS)             |
          |        |                         |                    |
      3.  |        |                         |---INVITE+offer---->|
          |        |                         |c=198.51.100.2:22007|
@@ -360,20 +359,24 @@
      5.  |<------180 Ringing----------------|                    |
          |        |                         |                    |
      6.  |        |                         |<---200+answer------|
-     7.  |<-200+answer,c=203.0.113.4:36010--|  c=198.51.100.33   |
          |        |                         |                    |
-     8.  |------------ACK------------------>|                    |
-     9.  |        |                         |-------ACK--------->|
+     7.  |        |       (SBC allocates 203.0.113.4:36010       |
+         |        |        for inbound RTP from UAC)             |
          |        |                         |                    |
-    10.  |=====RTP,dest=203.0.113.4:36010==>|                    |
+     8.  |<-200+answer,c=203.0.113.4:36010--|  c=198.51.100.33   |
          |        |                         |                    |
-    11.  |        |                    (SBC latches to           |
+     9.  |------------ACK------------------>|                    |
+    10.  |        |                         |-------ACK--------->|
+         |        |                         |                    |
+    11.  |=====RTP,dest=203.0.113.4:36010==>|                    |
+         |        |                         |                    |
+    12.  |        |                    (SBC latches to           |
          |        |                   source IP address and      |
          |        |                   port seen at (10))         |
          |        |                         |                    |
-    12.  |        |                         |<====== RTP ========|
+    13.  |        |                         |<====== RTP ========|
          |        |                         |                    |
-    13.  |<=====RTP, to latched address=====|                    |
+    14.  |<=====RTP, to latched address=====|                    |
          |        |                         |                    |
 ]]>                                                            
         </artwork>
@@ -401,9 +404,7 @@
    2.  |<------------ack-----------------------|                    |
        |              |                        |                    |
    3.  |              |      (Server allocates 203.0.113.9:2200     |
-       |              |       for inbound RTP from Client2,         |
-       |              |       and 203.0.113.9:3300 for              |
-       |              |       inbound RTP from Client1)             |
+       |              |       for inbound RTP from Client2)         |
        |              |                        |                    |
    4.  |              |                        |--session-initiate->|
        |              |                        cand=203.0.113.9:2200|
@@ -415,20 +416,24 @@
        |              |                        |  cand=198.51.100.8 |
        |              |                        |                    |
    7.  |              |                        |--------ack-------> |
-   8.  |<-session-accept cand=203.0.113.9:3300-|                    |
        |              |                        |                    |
-   9.  |-----------------ack------------------>|                    |
+   8.  |              |      (Server allocates  203.0.113.9:3300    |
+       |              |       for inbound RTP from Client1)         |
+       |              |                        |                    |
+   9.  |<-session-accept cand=203.0.113.9:3300-|                    |
+       |              |                        |                    |
+  10.  |-----------------ack------------------>|                    |
        |              |                        |                    |
        |              |                        |                    |
-  10.  |======RTP, dest=203.0.113.9:3300======>|                    |
+  11.  |======RTP, dest=203.0.113.9:3300======>|                    |
        |              |                        |                    |
-  11.  |              |               (XMPP server latches to       |
+  12.  |              |               (XMPP server latches to       |
        |              |                src IP 203.0.113.4 and       |
        |              |                src port seen at (10))       |
        |              |                        |                    |
-  12.  |              |                        |<====== RTP ========|
+  13.  |              |                        |<====== RTP ========|
        |              |                        |                    |
-  13.  |<======RTP, to latched address=========|                    |
+  14.  |<======RTP, to latched address=========|                    |
        |              |                        |                    |
 ]]>
         </artwork>
@@ -621,8 +626,8 @@
         remote party. That kind of IP address masking is often perceived
         as important. However, this is no longer an exclusive advantage 
         of HNT since it can also be accomplished by client-controlled 
-        relaying mechanisms such as <xref target="RFC5766">TURN</xref>, if the
-        client explicitly wishes to do so.
+        relaying mechanisms such as <xref target="RFC5766">TURN</xref>,
+        if the client explicitly wishes to do so.
       </t>
     </section>
     <section title='IANA Considerations'>
@@ -636,9 +641,9 @@
     </section>
     <section title='Acknowledgements'>
       <t>
-        The authors would like to thank Flemming Andreasen and Miguel A.
-        Garcia for their reviews and suggestions on improving this
-        document.
+        The authors would like to thank Flemming Andreasen, Miguel A.
+        Garcia, Ari Keränen and Paul Kyzivat for their reviews and
+        suggestions on improving this document.
       </t>
     </section>
   </middle>

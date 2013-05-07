@@ -80,7 +80,7 @@ Table of Contents
    8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  12
      8.1.  Normative References  . . . . . . . . . . . . . . . . . .  12
      8.2.  Informative References  . . . . . . . . . . . . . . . . .  12
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  13
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  14
 
 1.  Introduction
 
@@ -269,11 +269,11 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
 
    The latching mechanism works as follows:
 
-   1.  After receiving an offer from a NATed UA, a signaling
-       intermediary located on the public Internet would allocate a set
-       of IP address:ports on a media relay.  The set would then be
-       advertised to the remote party so that it would use it for all
-       media it wished to send toward the UA.
+
+
+
+
+
 
 
 
@@ -282,10 +282,17 @@ Ivov, et al.           Expires November 08, 2013                [Page 5]
 Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
 
 
+   1.  After receiving an offer from a NATed UA, a signaling
+       intermediary located on the public Internet would allocate a set
+       of IP address:ports on a media relay.  The set would then be
+       advertised to the remote party so that it would use those media
+       relay address:ports for all media it wished to send toward the
+       UA.
+
    2.  Next, after receiving an answer to its offer, the signaling
        server would allocate a second address:port set on the media
-       relay.  It would advertise this second set to the UA and use it
-       for all media traffic to and from the UA.
+       relay.  It would advertise this second set in the answer to the
+       UA.  The UA will then send to this media relay address:port.
 
    3.  The media relay receives the media packets on the allocated
        ports, and uses their source address and port as a destination
@@ -323,13 +330,6 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
 
 
          192.0.2.1                                         198.51.100.33
-          Alice     NAT        203.0.113.0/24-SBC-198.51.100.0/24  Bob
-         -------    ---                       ---                -------
-            |        |                         |                    |
-        1.  |--SIP INVITE+offer c=192.0.2.1--->|                    |
-            |        |                         |                    |
-        2.  |        |       (SBC allocates 198.51.100.2:22007      |
-            |        |        for inbound RTP from UAS,             |
 
 
 
@@ -338,8 +338,13 @@ Ivov, et al.           Expires November 08, 2013                [Page 6]
 Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
 
 
-            |        |        and 203.0.113.4:36010 for             |
-            |        |        inbound RTP from UAC)                 |
+          Alice     NAT        203.0.113.0/24-SBC-198.51.100.0/24  Bob
+         -------    ---                       ---                -------
+            |        |                         |                    |
+        1.  |--SIP INVITE+offer c=192.0.2.1--->|                    |
+            |        |                         |                    |
+        2.  |        |       (SBC allocates 198.51.100.2:22007      |
+            |        |        for inbound RTP from UAS)             |
             |        |                         |                    |
         3.  |        |                         |---INVITE+offer---->|
             |        |                         |c=198.51.100.2:22007|
@@ -350,20 +355,24 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
         5.  |<------180 Ringing----------------|                    |
             |        |                         |                    |
         6.  |        |                         |<---200+answer------|
-        7.  |<-200+answer,c=203.0.113.4:36010--|  c=198.51.100.33   |
             |        |                         |                    |
-        8.  |------------ACK------------------>|                    |
-        9.  |        |                         |-------ACK--------->|
+        7.  |        |       (SBC allocates 203.0.113.4:36010       |
+            |        |        for inbound RTP from UAC)             |
             |        |                         |                    |
-       10.  |=====RTP,dest=203.0.113.4:36010==>|                    |
+        8.  |<-200+answer,c=203.0.113.4:36010--|  c=198.51.100.33   |
             |        |                         |                    |
-       11.  |        |                    (SBC latches to           |
+        9.  |------------ACK------------------>|                    |
+       10.  |        |                         |-------ACK--------->|
+            |        |                         |                    |
+       11.  |=====RTP,dest=203.0.113.4:36010==>|                    |
+            |        |                         |                    |
+       12.  |        |                    (SBC latches to           |
             |        |                   source IP address and      |
             |        |                   port seen at (10))         |
             |        |                         |                    |
-       12.  |        |                         |<====== RTP ========|
+       13.  |        |                         |<====== RTP ========|
             |        |                         |                    |
-       13.  |<=====RTP, to latched address=====|                    |
+       14.  |<=====RTP, to latched address=====|                    |
             |        |                         |                    |
 
 
@@ -377,15 +386,6 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
 
 
      192.0.2.1  192.0.2.9/203.0.113.4        203.0.113.9       198.51.100.8
-     XMPP Client1       NAT                  XMPP Server       XMPP Client2
-       -------          ---                      ---                -------
-          |              |                        |                    |
-      1.  |----session-initiate cand=192.0.2.1--->|                    |
-          |              |                        |                    |
-      2.  |<------------ack-----------------------|                    |
-          |              |                        |                    |
-      3.  |              |      (Server allocates 203.0.113.9:2200     |
-          |              |       for inbound RTP from Client2,         |
 
 
 
@@ -394,8 +394,15 @@ Ivov, et al.           Expires November 08, 2013                [Page 7]
 Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
 
 
-          |              |       and 203.0.113.9:3300 for              |
-          |              |       inbound RTP from Client1)             |
+     XMPP Client1       NAT                  XMPP Server       XMPP Client2
+       -------          ---                      ---                -------
+          |              |                        |                    |
+      1.  |----session-initiate cand=192.0.2.1--->|                    |
+          |              |                        |                    |
+      2.  |<------------ack-----------------------|                    |
+          |              |                        |                    |
+      3.  |              |      (Server allocates 203.0.113.9:2200     |
+          |              |       for inbound RTP from Client2)         |
           |              |                        |                    |
       4.  |              |                        |--session-initiate->|
           |              |                        cand=203.0.113.9:2200|
@@ -407,24 +414,41 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
           |              |                        |  cand=198.51.100.8 |
           |              |                        |                    |
       7.  |              |                        |--------ack-------> |
-      8.  |<-session-accept cand=203.0.113.9:3300-|                    |
           |              |                        |                    |
-      9.  |-----------------ack------------------>|                    |
+      8.  |              |      (Server allocates  203.0.113.9:3300    |
+          |              |       for inbound RTP from Client1)         |
+          |              |                        |                    |
+      9.  |<-session-accept cand=203.0.113.9:3300-|                    |
+          |              |                        |                    |
+     10.  |-----------------ack------------------>|                    |
           |              |                        |                    |
           |              |                        |                    |
-     10.  |======RTP, dest=203.0.113.9:3300======>|                    |
+     11.  |======RTP, dest=203.0.113.9:3300======>|                    |
           |              |                        |                    |
-     11.  |              |               (XMPP server latches to       |
+     12.  |              |               (XMPP server latches to       |
           |              |                src IP 203.0.113.4 and       |
           |              |                src port seen at (10))       |
           |              |                        |                    |
-     12.  |              |                        |<====== RTP ========|
+     13.  |              |                        |<====== RTP ========|
           |              |                        |                    |
-     13.  |<======RTP, to latched address=========|                    |
+     14.  |<======RTP, to latched address=========|                    |
           |              |                        |                    |
 
 
            Figure 3: Latching by a SIP SBC across two interfaces
+
+
+
+
+
+
+
+
+
+Ivov, et al.           Expires November 08, 2013                [Page 8]
+
+Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
+
 
    The above is a general description, and some details vary between
    implementations or configuration settings.  For example, some
@@ -442,14 +466,6 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
    needs to support symmetric RTP.  That is, it needs to use the same
    ports for sending data as the ones it listens on for inbound packets.
    Today this is the case for with, for example, almost all SIP and XMPP
-
-
-
-Ivov, et al.           Expires November 08, 2013                [Page 8]
-
-Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
-
-
    clients.  Also UAs need to make sure they can begin sending media
    packets independently and without waiting for packets to arrive
    first.  In theory, it is possible that some UAs would not send
@@ -482,6 +498,14 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
    SYN-flagged TCP packet to the SBC (i.e., be the 'active' mode side of
    a TCP-based media session).  If both UAs of a TCP-based media session
    are behind NATs, then SBCs typically force both UAs to be the TCP
+
+
+
+Ivov, et al.           Expires November 08, 2013                [Page 9]
+
+Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
+
+
    clients, and the SBC splices the TCP connections together.  TCP
    splicing is a well-known technique, and described in [tcp-splicing].
 
@@ -498,14 +522,6 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
    The second issue raised by IETF members is that it causes media to go
    through a relay instead of directly over the IP-routed path between
    the two participating UAs.  While this adds obvious drawbacks such as
-
-
-
-Ivov, et al.           Expires November 08, 2013                [Page 9]
-
-Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
-
-
    reduced scalability and often increased latency, it is also
    considered a benefit by SBC administrators: if a customer pays for
    "phone" service, for example, the media is what is truly being paid
@@ -538,6 +554,14 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
    generally performed only on a case-by-case basis so that the
    specifics of individual deployments would be taken into account.
 
+
+
+
+Ivov, et al.           Expires November 08, 2013               [Page 10]
+
+Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
+
+
    In all of the above problems would still arise if the attacker knows
    the public source IP of the UA that is actually making the call.
    This would allow them to still flood all of the SBC's public IP
@@ -554,14 +578,6 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
    send media packets back to themselves since the SBC will not latch
    onto the attacker's packets.  There could still be an issue if the
    attacker happens to be either (1) in the IP routing path and thus can
-
-
-
-Ivov, et al.           Expires November 08, 2013               [Page 10]
-
-Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
-
-
    spoof the same IP as the real UA and get the media coming back, in
    which case the attacker hardly needs to attack at all to begin with,
    or (2) the attacker is behind the same NAT as the legitimate SIP UA,
@@ -594,6 +610,14 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
    UA does not know it occurs.  In certain cases it may be detectable,
    such as when ICE is supported by the SIP UA and the SBC modifies the
    default connection address and media port numbers in SDP, thereby
+
+
+
+Ivov, et al.           Expires November 08, 2013               [Page 11]
+
+Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
+
+
    disabling ICE due to the mismatch condition.  Even in that case,
    however, the SIP UA only knows a middle box is relaying media, but
    not necessarily that it is performing latching/HNT.
@@ -610,14 +634,6 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
    party.  That kind of IP address masking is often perceived as
    important.  However, this is no longer an exclusive advantage of HNT
    since it can also be accomplished by client-controlled relaying
-
-
-
-Ivov, et al.           Expires November 08, 2013               [Page 11]
-
-Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
-
-
    mechanisms such as TURN [RFC5766], if the client explicitly wishes to
    do so.
 
@@ -630,8 +646,9 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
 
 7.  Acknowledgements
 
-   The authors would like to thank Flemming Andreasen and Miguel A.
-   Garcia for their reviews and suggestions on improving this document.
+   The authors would like to thank Flemming Andreasen, Miguel A.
+   Garcia, Ari Keraenen and Paul Kyzivat for their reviews and
+   suggestions on improving this document.
 
 8.  References
 
@@ -650,6 +667,13 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
               B., and J. Segers, "Megaco Protocol Version 1.0", RFC
               3015, November 2000.
 
+
+
+Ivov, et al.           Expires November 08, 2013               [Page 12]
+
+Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
+
+
    [RFC3261]  Rosenberg, J., Schulzrinne, H., Camarillo, G., Johnston,
               A., Peterson, J., Sparks, R., Handley, M., and E.
               Schooler, "SIP: Session Initiation Protocol", RFC 3261,
@@ -665,14 +689,6 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
    [RFC3711]  Baugher, M., McGrew, D., Naslund, M., Carrara, E., and K.
               Norrman, "The Secure Real-time Transport Protocol (SRTP)",
               RFC 3711, March 2004.
-
-
-
-
-Ivov, et al.           Expires November 08, 2013               [Page 12]
-
-Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
-
 
    [RFC4474]  Peterson, J. and C. Jennings, "Enhancements for
               Authenticated Identity Management in the Session
@@ -707,6 +723,13 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
               Protocol (SIP) Session Border Control (SBC) Deployments",
               RFC 5853, April 2010.
 
+
+
+Ivov, et al.           Expires November 08, 2013               [Page 13]
+
+Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
+
+
    [RFC6120]  Saint-Andre, P., "Extensible Messaging and Presence
               Protocol (XMPP): Core", RFC 6120, March 2011.
 
@@ -716,19 +739,6 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
               December 2009.
 
 Authors' Addresses
-
-
-
-
-
-
-
-
-
-Ivov, et al.           Expires November 08, 2013               [Page 13]
-
-Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
-
 
    Emil Ivov
    Jitsi
@@ -754,16 +764,6 @@ Internet-Draft   Hosted NAT Traversal for Media in RTC          May 2013
    USA
 
    Email: dwing@cisco.com
-
-
-
-
-
-
-
-
-
-
 
 
 
